@@ -1,0 +1,53 @@
+# GitHub Actions工作流：Vercel预览部署
+# 此工作流在创建Pull Request时自动触发，将代码部署到Vercel进行预览
+name: GitHub Actions Preview Deployment
+
+# 触发条件：当有Pull Request事件时执行
+on:
+  push:
+    branches:
+      - main
+
+
+   
+# 工作任务定义
+jobs:
+  # 部署预览任务
+  Deploy-Preview:
+    # 运行环境：使用最新版Ubuntu
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 步骤1：检出代码仓库
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.11.0' # 选择适合的 Node.js 版本
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to EdgeOne Pages
+        run: npx edgeone pages deploy ./dist -n next-mix-render-template -t ${{ secrets.EDGEONE_TOKEN }} [-e <env>]
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_TOKEN }}
+      # 在Github代码提价处允许评论
+      - name: Enable PR comments
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            您的项目已更新至最新
+            | 项目|预览链接 |
+            |---|---|
+            | xxxx| ddddd|
+            | eeee| eeeee|
+            
+
+
+            
+            
+
