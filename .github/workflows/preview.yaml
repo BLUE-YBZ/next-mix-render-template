@@ -15,7 +15,8 @@ jobs:
   Deploy-Preview:
     # 运行环境：使用最新版Ubuntu
     runs-on: ubuntu-latest
-    
+    permissions:
+      pull-requests: write
     steps:
       # 步骤1：检出代码仓库
       - uses: actions/checkout@v3
@@ -31,7 +32,13 @@ jobs:
         run: npm run build
 
       - name: Deploy to EdgeOne Pages
-        run: npx edgeone pages deploy ./.next -n next-mix-render-template -t ${{ secrets.EDGEONE_TOKEN }} -e preview
+        id: deploy
+        run: |
+          echo "Deploying to EdgeOne Pages..."
+          DEPLOY_OUTPUT=$(npx edgeone pages deploy ./.next -n next-mix-render-template -t ${{ secrets.EDGEONE_TOKEN }} -e preview 2>&1)
+          echo "DEPLOY_RESULT<<EOF" >> $GITHUB_OUTPUT
+          echo "$DEPLOY_OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
         env:
           EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_TOKEN }}
       # 在Github代码提价处允许评论
@@ -39,14 +46,12 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            您的项目已更新至最新
-            | 项目|预览链接 |
-            |---|---|
-            | xxxx| ddddd|
-            | eeee| eeeee|
+            🚀 **EdgeOne Pages 部署完成**
             
-
-
+            **部署结果：**
+            ```
+            ${{ steps.deploy.outputs.DEPLOY_RESULT }}
+            ```
             
             
 
