@@ -36,9 +36,14 @@ jobs:
         run: |
           echo "Deploying to EdgeOne Pages..."
           DEPLOY_OUTPUT=$(npx edgeone pages deploy ./.next -n next-mix-render-template -t ${{ secrets.EDGEONE_TOKEN }} -e preview 2>&1)
-          echo "DEPLOY_RESULT<<EOF" >> $GITHUB_OUTPUT
-          echo "$DEPLOY_OUTPUT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # 提取 EDGEONE_DEPLOY_URL
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep "EDGEONE_DEPLOY_URL=" | cut -d'=' -f2-)
+          echo "DEPLOY_URL=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          
+          # 提取 EDGEONE_PROJECT_ID
+          PROJECT_ID=$(echo "$DEPLOY_OUTPUT" | grep "EDGEONE_PROJECT_ID=" | cut -d'=' -f2-)
+          echo "PROJECT_ID=$PROJECT_ID" >> $GITHUB_OUTPUT
         env:
           EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_TOKEN }}
       # 在Github代码提价处允许评论
@@ -48,10 +53,13 @@ jobs:
           message: |
             🚀 **EdgeOne Pages 部署完成**
             
-            **部署结果：**
-            ```
-            ${{ steps.deploy.outputs.DEPLOY_RESULT }}
-            ```
+            | 项目信息 | 值 |
+            |---|---|
+            | **预览链接** | ${{ steps.deploy.outputs.DEPLOY_URL }} |
+            | **项目ID** | ${{ steps.deploy.outputs.PROJECT_ID }} |
+
+            👉 点击 **https://console.tencentcloud.com/edgeone/pages/project/${{ steps.deploy.outputs.PROJECT_ID }}/deploy**在控制台查看
+
             
             
 
