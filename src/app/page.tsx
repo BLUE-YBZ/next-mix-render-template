@@ -5,7 +5,7 @@ import Features from '@/components/Features'
 export default function Home() {
   return (
     <PageLayout>
-      dsdsdsdserrrrtttv9
+      dsdsdsdserrrrtttv1.0
       <Hero />
       <Features />
     </PageLayout>
