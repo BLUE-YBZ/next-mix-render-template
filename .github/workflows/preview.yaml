@@ -55,10 +55,10 @@ jobs:
             
             | 项目信息 | 值 |
             |---|---|
-            | **预览链接** | ${{ steps.deploy.outputs.DEPLOY_URL }} |
+            | **预览链接** | [🔗 点击预览](${{ steps.deploy.outputs.DEPLOY_URL }}) |
             | **项目ID** | ${{ steps.deploy.outputs.PROJECT_ID }} |
 
-            👉 点击 **https://console.tencentcloud.com/edgeone/pages/project/${{ steps.deploy.outputs.PROJECT_ID }}/deploy**在控制台查看
+            👉 点击控制台查看: https://console.tencentcloud.com/edgeone/pages/project/${{ steps.deploy.outputs.PROJECT_ID }}/deploy
 
             
             
